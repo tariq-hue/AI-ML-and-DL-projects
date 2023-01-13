@@ -1,0 +1,48 @@
+	# Import necessary libraries
+    import numpy as np
+    from keras.preprocessing.image import ImageDataGenerator
+    from keras.models import Sequential
+    from keras.layers import Conv2D, MaxPooling2D
+    from keras.layers import Activation, Dropout, Flatten, Dense
+
+	# Define CNN architecture
+    model = Sequential()
+    model.add(Conv2D(32, (3, 3), input_shape=(150, 150, 3)))
+    model.add(Activation('relu'))
+    model.add(MaxPooling2D(pool_size=(2, 2)))
+
+    model.add(Conv2D(32, (3, 3)))
+    model.add(Activation('relu'))
+    model.add(MaxPooling2D(pool_size=(2, 2)))
+
+    model.add(Conv2D(64, (3, 3)))
+    model.add(Activation('relu'))
+    model.add(MaxPooling2D(pool_size=(2, 2)))
+
+    model.add(Flatten())
+    model.add(Dense(64))
+    model.add(Activation('relu'))
+    model.add(Dropout(0.5))
+    model.add(Dense(1))
+    model.add(Activation('sigmoid'))
+
+	# Compile model
+    model.compile(loss='binary_crossentropy',
+            optimizer='adam',
+            metrics=['accuracy'])
+
+	# Create data generator
+    datagen = ImageDataGenerator(rescale=1. / 255)
+
+    # Prepare data for training
+    train_generator = datagen.flow_from_directory(
+      'path/to/your/training/data',
+      target_size=(150, 150),
+      batch_size=32,
+      class_mode='binary')
+
+	# Train model
+    model.fit_generator(
+      train_generator,
+      steps_per_epoch=2000,
+      epochs=50)
